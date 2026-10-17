@@ -103,10 +103,10 @@ export function TrilhaView({ trilha }: { trilha: Trilha }) {
                           onClick={() => alternar(trilha.slug, t.id)}
                           aria-label={st === "forjado" ? `Desmarcar ${t.titulo}` : `Marcar ${t.titulo} como forjado`}
                           className={`grid size-8 shrink-0 place-items-center rounded-md border transition ${
-                            st === "forjado" ? "border-ouro/60 bg-brasa text-carvao" : "border-escoria hover:border-brasa"
+                            st === "forjado" ? "border-ouro/60 bg-brasa text-tinta" : "border-escoria hover:border-brasa"
                           }`}
                         >
-                          <Icone className={`size-4 ${st === "forjado" ? "text-carvao" : COR_STATUS[st]}`} />
+                          <Icone className={`size-4 ${st === "forjado" ? "text-tinta" : COR_STATUS[st]}`} />
                         </button>
                         <button onClick={() => selecionar(t.id)} className="min-w-0 flex-1 text-left">
                           <p className={`font-medium ${st === "frio" ? "text-cinza" : ""}`}>{t.titulo}</p>

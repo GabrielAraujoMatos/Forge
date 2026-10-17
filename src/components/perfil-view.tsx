@@ -49,7 +49,7 @@ export function PerfilView({ trilhas }: { trilhas: Trilha[] }) {
           </p>
           <Link
             href="/entrar"
-            className="flex shrink-0 items-center justify-center gap-1.5 rounded-md border border-brasa/60 px-3 py-1.5 text-sm text-brasa-clara transition hover:bg-brasa hover:text-carvao sm:ml-auto"
+            className="flex shrink-0 items-center justify-center gap-1.5 rounded-md border border-brasa/60 px-3 py-1.5 text-sm text-brasa-clara transition hover:bg-brasa hover:text-tinta sm:ml-auto"
           >
             <LogIn className="size-4" />
             Entrar

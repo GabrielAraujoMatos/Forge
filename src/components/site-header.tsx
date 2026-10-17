@@ -3,6 +3,7 @@
 import { Anvil, LogIn, LogOut, Route, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BotaoTema } from "./botao-tema";
 import { useForge } from "./forge-provider";
 
 const links = [
@@ -40,6 +41,8 @@ export function SiteHeader() {
             );
           })}
 
+          <BotaoTema />
+
           {contasAtivas && (
             <div className="ml-1 flex justify-end border-l border-ferro pl-2 sm:ml-2 sm:min-w-24 sm:pl-3">
               {!authPronto ? null : usuario ? (
@@ -74,7 +77,7 @@ export function SiteHeader() {
               ) : (
                 <Link
                   href="/entrar"
-                  className="flex items-center gap-1.5 rounded-md border border-brasa/60 px-3 py-1.5 text-brasa-clara transition hover:bg-brasa hover:text-carvao"
+                  className="flex items-center gap-1.5 rounded-md border border-brasa/60 px-3 py-1.5 text-brasa-clara transition hover:bg-brasa hover:text-tinta"
                 >
                   <LogIn className="size-4" />
                   Entrar

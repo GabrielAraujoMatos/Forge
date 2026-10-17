@@ -118,7 +118,7 @@ export function PainelTopico({ topico, topicos, status, aoFechar, aoSelecionar, 
             className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 font-display text-lg font-bold uppercase tracking-wider transition ${
               forjado
                 ? "border border-escoria text-cinza hover:border-cinza hover:text-aco"
-                : "bg-brasa text-carvao hover:bg-brasa-clara hover:shadow-brasa"
+                : "bg-brasa text-tinta hover:bg-brasa-clara hover:shadow-brasa"
             }`}
           >
             <Hammer className="size-5" />

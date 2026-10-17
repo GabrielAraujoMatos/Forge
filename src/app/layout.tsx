@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import { ForgeProvider } from "@/components/forge-provider";
 import { SiteHeader } from "@/components/site-header";
+import { SCRIPT_TEMA } from "@/lib/tema";
 import "./globals.css";
 
 const barlow = Barlow_Condensed({
@@ -27,15 +28,19 @@ export const metadata: Metadata = {
     "Roadmaps do básico ao avançado para forjar sua carreira em Infraestrutura de TI: Linux, Redes e mais.",
 };
 
-// Cor da barra do navegador no celular
-export const viewport: Viewport = { themeColor: "#121212" };
+// Cor da barra do navegador no celular (o BotaoTema troca no tema escuro)
+export const viewport: Viewport = { themeColor: "#f5f1ea" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
       className={`${barlow.variable} ${plex.variable} ${jetbrains.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }} />
+      </head>
       <body className="textura-forja flex min-h-full flex-col font-sans">
         <ForgeProvider>
           <SiteHeader />

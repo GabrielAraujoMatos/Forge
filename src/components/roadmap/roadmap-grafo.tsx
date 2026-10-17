@@ -4,6 +4,7 @@ import { Background, BackgroundVariant, Controls, ReactFlow, type Edge } from "@
 import "@xyflow/react/dist/style.css";
 import { useMemo } from "react";
 import type { Status, Topico } from "@/lib/types";
+import { useTema } from "../botao-tema";
 import { calcularLayout, LARGURA_NO } from "./layout";
 import { NoTopico, type NoTopicoTipo } from "./no-topico";
 
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export function RoadmapGrafo({ topicos, status, visiveis, selecionado, aoSelecionar }: Props) {
+  const tema = useTema();
   const posicoes = useMemo(() => calcularLayout(topicos), [topicos]);
   // A visão inicial enquadra o nível básico. No celular isso deixaria o zoom
   // ilegível, então o primeiro tópico fica no topo, centralizado, em zoom de leitura.
@@ -87,9 +89,9 @@ export function RoadmapGrafo({ topicos, status, visiveis, selecionado, aoSelecio
       defaultViewport={visaoCelular ?? undefined}
       minZoom={0.25}
       maxZoom={1.5}
-      colorMode="dark"
+      colorMode={tema === "escuro" ? "dark" : "light"}
     >
-      <Background variant={BackgroundVariant.Dots} gap={22} size={1} color="#2a2724" />
+      <Background variant={BackgroundVariant.Dots} gap={22} size={1} color="var(--color-escoria)" />
       <Controls showInteractive={false} />
     </ReactFlow>
   );
