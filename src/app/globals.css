@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paleta da forja */
+  --color-carvao: #121212;
+  --color-bigorna: #1a1918;
+  --color-ferro: #24221f;
+  --color-escoria: #34302b;
+  --color-aco: #e8e2d9;
+  --color-cinza: #9a938a;
+  --color-fosco: #6b655d;
+  --color-brasa: #ff6b1a;
+  --color-brasa-clara: #ff9a4d;
+  --color-ouro: #ffc15e;
+  --color-rubro: #c2410c;
+
+  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --shadow-brasa: 0 0 0 1px rgb(255 107 26 / 0.5), 0 0 24px -4px rgb(255 107 26 / 0.55);
+  --shadow-forjado: 0 0 0 1px rgb(255 193 94 / 0.6), 0 0 32px -2px rgb(255 107 26 / 0.7);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-carvao);
+  color: var(--color-aco);
+}
+
+::selection {
+  background: rgb(255 107 26 / 0.35);
+}
+
+/* Textura sutil de metal escovado no fundo */
+.textura-forja {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgb(255 107 26 / 0.12), transparent 70%),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.012) 0 1px, transparent 1px 3px);
+}
+
+.texto-brasa {
+  background: linear-gradient(180deg, var(--color-ouro), var(--color-brasa) 55%, var(--color-rubro));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Barra de progresso que "aquece" */
+.barra-calor {
+  background: linear-gradient(90deg, var(--color-rubro), var(--color-brasa) 60%, var(--color-ouro));
+}
+
+/* Ajustes do React Flow ao tema */
+.react-flow {
+  --xy-background-color: transparent;
+  --xy-edge-stroke: var(--color-escoria);
+  --xy-controls-button-background-color: var(--color-ferro);
+  --xy-controls-button-background-color-hover: var(--color-escoria);
+  --xy-controls-button-color: var(--color-aco);
+  --xy-controls-button-border-color: var(--color-escoria);
+}
+
+@keyframes pulso-brasa {
+  0%,
+  100% {
+    box-shadow: var(--shadow-brasa);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgb(255 107 26 / 0.7), 0 0 32px -2px rgb(255 107 26 / 0.7);
+  }
+}
+
+.pulso-brasa {
+  animation: pulso-brasa 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulso-brasa {
+    animation: none;
+  }
+}
