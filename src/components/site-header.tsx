@@ -1,6 +1,6 @@
 "use client";
 
-import { Anvil, LogIn, LogOut, Route, Search } from "lucide-react";
+import { Anvil, LogIn, LogOut, Route, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useForge } from "./forge-provider";
@@ -43,10 +43,25 @@ export function SiteHeader() {
           {contasAtivas && (
             <div className="ml-1 flex justify-end border-l border-ferro pl-2 sm:ml-2 sm:min-w-24 sm:pl-3">
               {!authPronto ? null : usuario ? (
-                <div className="flex items-center gap-2">
-                  <span className="hidden max-w-40 truncate text-cinza sm:inline" title={usuario.email}>
-                    {usuario.user_metadata?.user_name ?? usuario.email}
-                  </span>
+                <div className="flex items-center gap-1">
+                  <Link
+                    href="/perfil"
+                    aria-label="Perfil"
+                    title={usuario.email}
+                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition ${
+                      pathname.startsWith("/perfil") ? "bg-ferro text-aco" : "text-cinza hover:text-aco"
+                    }`}
+                  >
+                    {usuario.user_metadata?.avatar_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element -- avatar externo do GitHub
+                      <img src={usuario.user_metadata.avatar_url} alt="" className="size-6 rounded-full" />
+                    ) : (
+                      <UserRound className="size-4" />
+                    )}
+                    <span className="hidden max-w-40 truncate sm:inline">
+                      {usuario.user_metadata?.user_name ?? usuario.email}
+                    </span>
+                  </Link>
                   <button
                     onClick={() => void sair()}
                     className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-cinza transition hover:text-aco"
