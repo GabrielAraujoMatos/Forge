@@ -18,7 +18,7 @@ export function LegendaStatus() {
           <li key={s.id} className="flex items-center gap-2">
             <Icone className={`size-4 ${COR_STATUS[s.id]}`} />
             <span className="text-aco">{s.nome}</span>
-            <span className="text-fosco">{s.descricao}</span>
+            <span className="hidden text-fosco sm:inline">{s.descricao}</span>
           </li>
         );
       })}

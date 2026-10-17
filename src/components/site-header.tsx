@@ -1,12 +1,12 @@
 "use client";
 
-import { Anvil, LogIn, LogOut, Search } from "lucide-react";
+import { Anvil, LogIn, LogOut, Route, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useForge } from "./forge-provider";
 
 const links = [
-  { href: "/", rotulo: "Trilhas" },
+  { href: "/", rotulo: "Trilhas", icone: Route },
   { href: "/busca", rotulo: "Busca", icone: Search },
 ];
 
@@ -29,18 +29,19 @@ export function SiteHeader() {
               <Link
                 key={href}
                 href={href}
-                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 transition ${
+                aria-label={rotulo}
+                className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 transition sm:px-3 ${
                   ativo ? "bg-ferro text-aco" : "text-cinza hover:text-aco"
                 }`}
               >
-                {Icone && <Icone className="size-4" />}
-                {rotulo}
+                <Icone className="size-4" />
+                <span className="hidden sm:inline">{rotulo}</span>
               </Link>
             );
           })}
 
           {contasAtivas && (
-            <div className="ml-2 flex min-w-24 justify-end border-l border-ferro pl-3">
+            <div className="ml-1 flex justify-end border-l border-ferro pl-2 sm:ml-2 sm:min-w-24 sm:pl-3">
               {!authPronto ? null : usuario ? (
                 <div className="flex items-center gap-2">
                   <span className="hidden max-w-40 truncate text-cinza sm:inline" title={usuario.email}>
@@ -50,9 +51,9 @@ export function SiteHeader() {
                     onClick={() => void sair()}
                     className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-cinza transition hover:text-aco"
                     title="Sair"
+                    aria-label="Sair"
                   >
                     <LogOut className="size-4" />
-                    <span className="sm:hidden">Sair</span>
                   </button>
                 </div>
               ) : (

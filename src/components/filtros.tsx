@@ -71,7 +71,7 @@ export function Filtros({
             {n.nome}
           </Chip>
         ))}
-        <span className="mx-1 h-4 w-px bg-ferro" />
+        <span className="mx-1 hidden h-4 w-px bg-ferro sm:block" />
         {STATUS.map((s) => {
           const Icone = ICONE_STATUS[s.id];
           return (

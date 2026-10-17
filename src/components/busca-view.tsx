@@ -27,7 +27,7 @@ export function BuscaView({ topicos, trilhas }: { topicos: TopicoComTrilha[]; tr
   return (
     <>
       <div className="mb-6">
-        <Filtros valor={filtros} aoMudar={setFiltros} placeholder="Buscar em todas as trilhas: DNS, permissões, VPN…">
+        <Filtros valor={filtros} aoMudar={setFiltros} placeholder="Buscar: DNS, permissões, VPN…">
           {trilhas.map((t) => (
             <button
               key={t.slug}
@@ -40,7 +40,7 @@ export function BuscaView({ topicos, trilhas }: { topicos: TopicoComTrilha[]; tr
               {t.titulo}
             </button>
           ))}
-          <span className="mx-1 h-4 w-px bg-ferro" />
+          <span className="mx-1 hidden h-4 w-px bg-ferro sm:block" />
         </Filtros>
       </div>
 
