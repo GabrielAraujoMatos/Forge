@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import { ForgeProvider } from "@/components/forge-provider";
 import { SiteHeader } from "@/components/site-header";
@@ -26,6 +26,9 @@ export const metadata: Metadata = {
   description:
     "Roadmaps do básico ao avançado para forjar sua carreira em Infraestrutura de TI: Linux, Redes e mais.",
 };
+
+// Cor da barra do navegador no celular
+export const viewport: Viewport = { themeColor: "#121212" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
