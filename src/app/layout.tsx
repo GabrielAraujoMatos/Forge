@@ -22,10 +22,26 @@ const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const descricao =
+  "Roadmaps do básico ao avançado para forjar sua carreira em Infraestrutura de TI: Linux, Redes, Windows Server, Cloud e DevOps.";
+
 export const metadata: Metadata = {
+  // Prévias de link precisam de URL absoluta; a Vercel informa o domínio de produção.
+  metadataBase: new URL(
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "http://localhost:3000",
+  ),
   title: { default: "Forge: trilhas de Infraestrutura de TI", template: "%s · Forge" },
-  description:
-    "Roadmaps do básico ao avançado para forjar sua carreira em Infraestrutura de TI: Linux, Redes e mais.",
+  description: descricao,
+  openGraph: {
+    title: "Forge: trilhas de Infraestrutura de TI",
+    description: descricao,
+    siteName: "Forge",
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 // Cor da barra do navegador no celular (o BotaoTema troca no tema escuro)

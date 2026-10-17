@@ -32,7 +32,8 @@ Cada trilha é um arquivo em `src/content/trilhas/`. Para criar uma nova:
 
 1. Copie `linux.ts` para `minha-trilha.ts` e edite `slug`, `titulo`, `descricao` e `topicos`.
 2. Em cada tópico, `requisitos` lista os `id`s que vêm antes; o mapa é montado automaticamente.
-3. Registre a trilha em `src/content/index.ts`.
+3. Registre a trilha em `src/content/index.ts`. A prévia de link (Open Graph) da trilha é gerada sozinha.
+4. Para um ícone novo, inclua o nome em `icone` (`src/lib/types.ts`) e o ícone do lucide em `src/components/icone-trilha.tsx`.
 
 ## Estrutura
 
