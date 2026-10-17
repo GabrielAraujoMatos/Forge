@@ -70,7 +70,7 @@ export default function Home() {
 
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-ferro p-6 text-center text-fosco">
             <p className="font-display text-xl font-bold uppercase tracking-wide text-cinza">Em breve</p>
-            <p className="mt-1 text-sm">Windows Server, Cloud, DevOps e mais trilhas na bigorna.</p>
+            <p className="mt-1 text-sm">Segurança, bancos de dados e mais trilhas na bigorna.</p>
           </div>
         </div>
       </section>

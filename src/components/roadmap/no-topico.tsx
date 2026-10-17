@@ -19,13 +19,13 @@ export type NoTopicoTipo = Node<NoTopicoDados, "topico">;
 const estilos: Record<Status, string> = {
   frio: "border-escoria bg-bigorna text-cinza",
   aquecendo: "border-brasa/70 bg-ferro text-aco shadow-brasa",
-  forjado: "border-ouro/70 bg-linear-to-br from-brasa to-rubro text-carvao shadow-forjado",
+  forjado: "border-ouro/70 bg-linear-to-br from-brasa to-rubro text-tinta shadow-forjado",
 };
 
 const iconeCor: Record<Status, string> = {
   frio: "text-fosco",
   aquecendo: "text-brasa",
-  forjado: "text-carvao",
+  forjado: "text-tinta",
 };
 
 const nomeNivel = Object.fromEntries(NIVEIS.map((n) => [n.id, n.nome]));
@@ -46,7 +46,7 @@ function NoTopicoBase({ data }: NodeProps<NoTopicoTipo>) {
       <div className="min-w-0">
         <p
           className={`font-mono text-[10px] uppercase tracking-widest ${
-            data.status === "forjado" ? "text-carvao/70" : "text-fosco"
+            data.status === "forjado" ? "text-tinta/70" : "text-fosco"
           }`}
         >
           {nomeNivel[data.nivel]}

@@ -25,7 +25,7 @@ export type Trilha = {
   titulo: string;
   descricao: string;
   /** Nome de um ícone do lucide-react. */
-  icone: "terminal" | "network";
+  icone: "terminal" | "network" | "server" | "cloud" | "infinity";
   topicos: Topico[];
 };
 

@@ -14,7 +14,14 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/trilhas/[slug]">): Promise<Metadata> {
   const trilha = getTrilha((await params).slug);
-  return trilha ? { title: `Trilha ${trilha.titulo}`, description: trilha.descricao } : {};
+  if (!trilha) return {};
+  const titulo = `Trilha ${trilha.titulo}`;
+  return {
+    title: titulo,
+    description: trilha.descricao,
+    // O openGraph do filho substitui o do layout inteiro, então repete siteName e locale.
+    openGraph: { title: `${titulo} · Forge`, description: trilha.descricao, siteName: "Forge", locale: "pt_BR", type: "website" },
+  };
 }
 
 export default function PaginaTrilha({ params }: PageProps<"/trilhas/[slug]">) {

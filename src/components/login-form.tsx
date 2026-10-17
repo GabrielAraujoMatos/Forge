@@ -151,7 +151,7 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={enviando}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-brasa px-4 py-3 font-display text-lg font-bold uppercase tracking-wider text-carvao transition hover:bg-brasa-clara hover:shadow-brasa disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-brasa px-4 py-3 font-display text-lg font-bold uppercase tracking-wider text-tinta transition hover:bg-brasa-clara hover:shadow-brasa disabled:opacity-60"
         >
           {enviando && <Loader className="size-4 animate-spin" />}
           {modo === "entrar" ? "Entrar" : "Criar conta"}
