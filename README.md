@@ -17,8 +17,7 @@ Abra http://localhost:3000.
 
 ## Supabase
 
-1. **Tabela de progresso:** no painel do Supabase, abra *SQL Editor* e execute
-   [`supabase/migrations/0001_progresso.sql`](supabase/migrations/0001_progresso.sql).
+1. **Tabela de progresso:** no painel do Supabase, abra *SQL Editor*.
 2. **URLs de redirecionamento:** em *Authentication → URL Configuration*, defina o *Site URL*
    (ex.: `http://localhost:3000` em desenvolvimento) e adicione a URL de produção em *Redirect URLs*.
 3. **Login com GitHub (opcional):** crie um OAuth App no GitHub com callback
