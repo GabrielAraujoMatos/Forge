@@ -12,6 +12,7 @@ import { IconeTrilha } from "./icone-trilha";
 import { BarraProgresso } from "./progresso";
 import { CertificacoesPerfil } from "./certificacoes";
 import { PainelRitmo } from "./ritmo";
+import { SeuPlano } from "./seu-plano";
 
 const MAX_PROXIMOS = 3;
 const MAX_RECENTES = 6;
@@ -58,6 +59,10 @@ export function PerfilView({ trilhas }: { trilhas: Trilha[] }) {
           </Link>
         </div>
       )}
+
+      <div className="mb-10 empty:hidden">
+        <SeuPlano compacto />
+      </div>
 
       <PainelRitmo />
 

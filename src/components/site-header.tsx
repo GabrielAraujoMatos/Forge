@@ -1,6 +1,6 @@
 "use client";
 
-import { Anvil, LogIn, LogOut, Route, Search, UserRound } from "lucide-react";
+import { Anvil, LogIn, LogOut, Map as IconeMapa, Route, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BotaoTema } from "./botao-tema";
@@ -9,6 +9,7 @@ import { ChamaSequencia } from "./ritmo";
 
 const links = [
   { href: "/", rotulo: "Trilhas", icone: Route },
+  { href: "/roteiros", rotulo: "Roteiros", icone: IconeMapa },
   { href: "/busca", rotulo: "Busca", icone: Search },
 ];
 
@@ -19,9 +20,10 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-ferro bg-carvao/85 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4">
-        <Link href="/" className="group flex items-center gap-2">
+        <Link href="/" className="group flex items-center gap-2" aria-label="Forge, página inicial">
           <Anvil className="size-6 text-brasa transition group-hover:drop-shadow-[0_0_8px_rgb(255_107_26/0.8)]" />
-          <span className="font-display text-2xl font-extrabold tracking-[0.18em] text-aco">FORGE</span>
+          {/* Em telas estreitas fica só a bigorna, para caber a navegação. */}
+          <span className="hidden font-display text-2xl font-extrabold tracking-[0.18em] text-aco min-[440px]:inline">FORGE</span>
         </Link>
 
         <nav className="ml-auto flex items-center gap-1 text-sm">

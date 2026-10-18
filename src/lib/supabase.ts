@@ -15,3 +15,9 @@ export function getSupabase(): SupabaseClient | null {
   cliente = url && chave ? createClient(url, chave, { auth: { flowType: "pkce" } }) : null;
   return cliente;
 }
+
+/** Cabeçalhos para as rotas da API que agem em nome do usuário logado. */
+export async function cabecalhosAuth(): Promise<HeadersInit> {
+  const { data } = (await getSupabase()?.auth.getSession()) ?? { data: { session: null } };
+  return { Authorization: `Bearer ${data.session?.access_token ?? ""}`, "Content-Type": "application/json" };
+}

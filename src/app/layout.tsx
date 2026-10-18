@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import { Barlow_Condensed, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import { ForgeProvider } from "@/components/forge-provider";
 import { SiteHeader } from "@/components/site-header";
@@ -62,7 +63,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteHeader />
           <div className="flex flex-1 flex-col">{children}</div>
           <footer className="border-t border-ferro px-4 py-6 text-center text-sm text-fosco">
-            Forge · forjado com café e terminal
+            Forge · forjado com café e terminal ·{" "}
+            <Link href="/planos" className="hover:text-aco">
+              Planos
+            </Link>
           </footer>
         </ForgeProvider>
       </body>
