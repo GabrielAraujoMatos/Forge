@@ -1,8 +1,8 @@
 "use client";
 
-import { List, Workflow } from "lucide-react";
+import { List, NotebookPen, Workflow } from "lucide-react";
 import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
-import { statusTopico } from "@/lib/status";
+import { chaveTopico, statusTopico } from "@/lib/status";
 import { NIVEIS, type Status, type Trilha } from "@/lib/types";
 import { combinaFiltros, Filtros, FILTROS_VAZIOS, type EstadoFiltros } from "../filtros";
 import { useForge } from "../forge-provider";
@@ -20,7 +20,7 @@ const lerHash = () => decodeURIComponent(window.location.hash.slice(1));
 const lerHashServidor = () => "";
 
 export function TrilhaView({ trilha }: { trilha: Trilha }) {
-  const { concluidos, alternar } = useForge();
+  const { concluidos, alternar, notas } = useForge();
   const [filtros, setFiltros] = useState<EstadoFiltros>(FILTROS_VAZIOS);
   const [modo, setModo] = useState<"mapa" | "lista">("mapa");
   const hash = useSyncExternalStore(assinarHash, lerHash, lerHashServidor);
@@ -31,6 +31,11 @@ export function TrilhaView({ trilha }: { trilha: Trilha }) {
   const status = useMemo(
     () => new Map<string, Status>(topicos.map((t) => [t.id, statusTopico(trilha.slug, t, concluidos)])),
     [topicos, trilha.slug, concluidos],
+  );
+
+  const comNota = useMemo(
+    () => new Set(topicos.filter((t) => notas.has(chaveTopico(trilha.slug, t.id))).map((t) => t.id)),
+    [topicos, trilha.slug, notas],
   );
 
   const visiveis = useMemo(
@@ -81,6 +86,7 @@ export function TrilhaView({ trilha }: { trilha: Trilha }) {
             topicos={topicos}
             status={status}
             visiveis={visiveis}
+            comNota={comNota}
             selecionado={selecionado?.id ?? null}
             aoSelecionar={selecionar}
           />
@@ -109,7 +115,10 @@ export function TrilhaView({ trilha }: { trilha: Trilha }) {
                           <Icone className={`size-4 ${st === "forjado" ? "text-tinta" : COR_STATUS[st]}`} />
                         </button>
                         <button onClick={() => selecionar(t.id)} className="min-w-0 flex-1 text-left">
-                          <p className={`font-medium ${st === "frio" ? "text-cinza" : ""}`}>{t.titulo}</p>
+                          <p className={`flex items-center gap-1.5 font-medium ${st === "frio" ? "text-cinza" : ""}`}>
+                            {t.titulo}
+                            {comNota.has(t.id) && <NotebookPen className="size-3.5 shrink-0 text-fosco" aria-label="Tem anotação" />}
+                          </p>
                           <p className="truncate text-sm text-fosco">{t.resumo}</p>
                         </button>
                       </li>
@@ -126,6 +135,7 @@ export function TrilhaView({ trilha }: { trilha: Trilha }) {
       {selecionado && (
         <PainelTopico
           key={selecionado.id}
+          trilha={trilha.slug}
           topico={selecionado}
           topicos={topicos}
           status={status}
