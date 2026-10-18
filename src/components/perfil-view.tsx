@@ -10,6 +10,8 @@ import { NIVEIS, type Trilha } from "@/lib/types";
 import { useForge } from "./forge-provider";
 import { IconeTrilha } from "./icone-trilha";
 import { BarraProgresso } from "./progresso";
+import { CertificacoesPerfil } from "./certificacoes";
+import { PainelRitmo } from "./ritmo";
 
 const MAX_PROXIMOS = 3;
 const MAX_RECENTES = 6;
@@ -57,15 +59,20 @@ export function PerfilView({ trilhas }: { trilhas: Trilha[] }) {
         </div>
       )}
 
+      <PainelRitmo />
+
       <div className="grid gap-10 lg:grid-cols-[1fr_340px]">
-        <section>
-          <h2 className="mb-4 font-display text-3xl font-bold uppercase tracking-wide">Trilhas</h2>
-          <div className="grid gap-4">
-            {trilhas.map((trilha) => (
-              <CartaoTrilha key={trilha.slug} trilha={trilha} concluidos={concluidos} />
-            ))}
-          </div>
-        </section>
+        <div className="space-y-10">
+          <section>
+            <h2 className="mb-4 font-display text-3xl font-bold uppercase tracking-wide">Trilhas</h2>
+            <div className="grid gap-4">
+              {trilhas.map((trilha) => (
+                <CartaoTrilha key={trilha.slug} trilha={trilha} concluidos={concluidos} />
+              ))}
+            </div>
+          </section>
+          <CertificacoesPerfil />
+        </div>
 
         <aside className="space-y-10">
           <Proximos trilhas={trilhas} concluidos={concluidos} />

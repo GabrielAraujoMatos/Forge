@@ -28,6 +28,12 @@ export function progressoTrilha(
   };
 }
 
+/** Progresso de uma lista de chaves "trilha/topico", como os tópicos de uma prova. */
+export function progressoChaves(chaves: string[], concluidos: ReadonlySet<string>) {
+  const feitos = chaves.filter((k) => concluidos.has(k)).length;
+  return { feitos, total: chaves.length, pct: chaves.length ? Math.round((feitos / chaves.length) * 100) : 0 };
+}
+
 /** Remove acentos e caixa para comparar textos na busca. */
 export function normalizar(texto: string) {
   return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();

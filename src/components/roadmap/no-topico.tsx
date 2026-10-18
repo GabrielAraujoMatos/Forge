@@ -1,6 +1,7 @@
 "use client";
 
 import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
+import { NotebookPen } from "lucide-react";
 import { memo } from "react";
 import { NIVEIS, type Nivel, type Status } from "@/lib/types";
 import { ICONE_STATUS } from "../legenda-status";
@@ -12,6 +13,7 @@ export type NoTopicoDados = {
   status: Status;
   esmaecido: boolean;
   selecionado: boolean;
+  temNota: boolean;
 };
 
 export type NoTopicoTipo = Node<NoTopicoDados, "topico">;
@@ -35,7 +37,7 @@ function NoTopicoBase({ data }: NodeProps<NoTopicoTipo>) {
   return (
     <div
       style={{ width: LARGURA_NO, height: ALTURA_NO }}
-      className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 transition duration-300 ${estilos[data.status]} ${
+      className={`relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 transition duration-300 ${estilos[data.status]} ${
         data.esmaecido ? "opacity-20" : ""
       } ${data.selecionado ? "ring-2 ring-aco ring-offset-2 ring-offset-carvao" : ""} ${
         data.status === "aquecendo" && !data.esmaecido ? "pulso-brasa" : ""
@@ -53,6 +55,12 @@ function NoTopicoBase({ data }: NodeProps<NoTopicoTipo>) {
         </p>
         <p className="line-clamp-2 text-sm font-semibold leading-tight">{data.titulo}</p>
       </div>
+      {data.temNota && (
+        <NotebookPen
+          className={`absolute right-1.5 top-1.5 size-3 ${data.status === "forjado" ? "text-tinta/70" : "text-fosco"}`}
+          aria-label="Tem anotação"
+        />
+      )}
       <Handle type="source" position={Position.Bottom} className="size-1.5! border-0! bg-escoria!" />
     </div>
   );

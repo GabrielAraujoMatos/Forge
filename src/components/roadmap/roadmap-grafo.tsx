@@ -14,11 +14,12 @@ type Props = {
   topicos: Topico[];
   status: Map<string, Status>;
   visiveis: Set<string>;
+  comNota: Set<string>;
   selecionado: string | null;
   aoSelecionar: (id: string) => void;
 };
 
-export function RoadmapGrafo({ topicos, status, visiveis, selecionado, aoSelecionar }: Props) {
+export function RoadmapGrafo({ topicos, status, visiveis, comNota, selecionado, aoSelecionar }: Props) {
   const tema = useTema();
   const posicoes = useMemo(() => calcularLayout(topicos), [topicos]);
   // A visão inicial enquadra o nível básico. No celular isso deixaria o zoom
@@ -47,9 +48,10 @@ export function RoadmapGrafo({ topicos, status, visiveis, selecionado, aoSelecio
           status: status.get(t.id) ?? "frio",
           esmaecido: !visiveis.has(t.id),
           selecionado: selecionado === t.id,
+          temNota: comNota.has(t.id),
         },
       })),
-    [topicos, posicoes, status, visiveis, selecionado],
+    [topicos, posicoes, status, visiveis, comNota, selecionado],
   );
 
   const arestas = useMemo<Edge[]>(

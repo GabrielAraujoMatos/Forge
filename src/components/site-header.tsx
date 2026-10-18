@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BotaoTema } from "./botao-tema";
 import { useForge } from "./forge-provider";
+import { ChamaSequencia } from "./ritmo";
 
 const links = [
   { href: "/", rotulo: "Trilhas", icone: Route },
@@ -41,6 +42,7 @@ export function SiteHeader() {
             );
           })}
 
+          <ChamaSequencia />
           <BotaoTema />
 
           {contasAtivas && (
