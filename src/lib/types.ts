@@ -29,6 +29,27 @@ export type Trilha = {
   topicos: Topico[];
 };
 
+export type Certificacao = {
+  id: string;
+  /** Nome curto para chips e cartões, como "LPIC-1". */
+  sigla: string;
+  nome: string;
+  emissor: string;
+  nivel: "fundamentos" | "associado" | "profissional";
+  /** Trilha principal, onde a prova aparece. */
+  trilha: string;
+  /** Página oficial da prova. */
+  url: string;
+  /** Tópicos cobertos, no formato "trilha/topico". */
+  topicos: string[];
+};
+
+export const NIVEIS_CERTIFICACAO: Record<Certificacao["nivel"], string> = {
+  fundamentos: "Fundamentos",
+  associado: "Associado",
+  profissional: "Profissional",
+};
+
 /** Estado de um tópico para o usuário. */
 export type Status = "frio" | "aquecendo" | "forjado";
 

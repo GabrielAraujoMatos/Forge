@@ -17,7 +17,7 @@ Abra http://localhost:3000.
 
 ## Supabase
 
-1. **Tabelas de progresso e anotações:** no painel do Supabase, abra *SQL Editor* e rode, em ordem,
+1. **Tabelas (progresso, anotações, atividade e meta):** no painel do Supabase, abra *SQL Editor* e rode, em ordem,
    os arquivos de `supabase/migrations/`.
 2. **URLs de redirecionamento:** em *Authentication → URL Configuration*, defina o *Site URL*
    (ex.: `http://localhost:3000` em desenvolvimento) e adicione a URL de produção em *Redirect URLs*.

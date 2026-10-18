@@ -4,6 +4,7 @@ import { trilhas } from "@/content";
 import { IconeTrilha } from "@/components/icone-trilha";
 import { LegendaStatus } from "@/components/legenda-status";
 import { ProgressoTrilha } from "@/components/progresso";
+import { ContinuarCard } from "@/components/ritmo";
 import { NIVEIS } from "@/lib/types";
 
 export default function Home() {
@@ -34,6 +35,8 @@ export default function Home() {
           </span>
         </div>
       </section>
+
+      <ContinuarCard />
 
       <section>
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">

@@ -1,9 +1,13 @@
 "use client";
 
 import { List, NotebookPen, Workflow } from "lucide-react";
-import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { certificacoesDaTrilha } from "@/content/certificacoes";
+import { ultimoStore } from "@/lib/ritmo";
 import { chaveTopico, statusTopico } from "@/lib/status";
 import { NIVEIS, type Status, type Trilha } from "@/lib/types";
+import { CertificacoesTrilha } from "../certificacoes";
 import { combinaFiltros, Filtros, FILTROS_VAZIOS, type EstadoFiltros } from "../filtros";
 import { useForge } from "../forge-provider";
 import { COR_STATUS, ICONE_STATUS } from "../legenda-status";
@@ -24,9 +28,18 @@ export function TrilhaView({ trilha }: { trilha: Trilha }) {
   const [filtros, setFiltros] = useState<EstadoFiltros>(FILTROS_VAZIOS);
   const [modo, setModo] = useState<"mapa" | "lista">("mapa");
   const hash = useSyncExternalStore(assinarHash, lerHash, lerHashServidor);
+  // A prova destacada fica em ?cert= para o perfil poder abrir a trilha já filtrada.
+  const idCert = useSearchParams().get("cert");
+  const cert = certificacoesDaTrilha(trilha.slug).find((c) => c.id === idCert) ?? null;
 
   const { topicos } = trilha;
   const selecionado = topicos.find((t) => t.id === hash) ?? null;
+
+  // Guarda o último tópico aberto para o "continue de onde parou" da página inicial.
+  const idSelecionado = selecionado?.id;
+  useEffect(() => {
+    if (idSelecionado) ultimoStore.salvar({ trilha: trilha.slug, topico: idSelecionado });
+  }, [trilha.slug, idSelecionado]);
 
   const status = useMemo(
     () => new Map<string, Status>(topicos.map((t) => [t.id, statusTopico(trilha.slug, t, concluidos)])),
@@ -39,9 +52,23 @@ export function TrilhaView({ trilha }: { trilha: Trilha }) {
   );
 
   const visiveis = useMemo(
-    () => new Set(topicos.filter((t) => combinaFiltros(t, status.get(t.id)!, filtros)).map((t) => t.id)),
-    [topicos, status, filtros],
+    () =>
+      new Set(
+        topicos
+          .filter((t) => combinaFiltros(t, status.get(t.id)!, filtros))
+          .filter((t) => !cert || cert.topicos.includes(chaveTopico(trilha.slug, t.id)))
+          .map((t) => t.id),
+      ),
+    [topicos, status, filtros, cert, trilha.slug],
   );
+
+  const selecionarCert = useCallback((id: string | null) => {
+    const params = new URLSearchParams(window.location.search);
+    if (id) params.set("cert", id);
+    else params.delete("cert");
+    const busca = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${busca ? `?${busca}` : ""}${window.location.hash}`);
+  }, []);
 
   const selecionar = useCallback((id: string) => {
     window.location.hash = id;
@@ -54,6 +81,8 @@ export function TrilhaView({ trilha }: { trilha: Trilha }) {
 
   return (
     <>
+      <CertificacoesTrilha trilha={trilha.slug} selecionada={cert} aoSelecionar={selecionarCert} />
+
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start">
         <div className="flex-1">
           <Filtros valor={filtros} aoMudar={setFiltros} placeholder={`Buscar em ${trilha.titulo}…`} />

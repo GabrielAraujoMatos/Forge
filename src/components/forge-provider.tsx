@@ -4,6 +4,17 @@ import type { User } from "@supabase/supabase-js";
 import { createContext, use, useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
 import { assinarNotas, lerNotas, lerNotasServidor, salvarNotas, type Nota, type Notas } from "@/lib/notas-store";
+import {
+  atividadeStore,
+  DIA_VAZIO,
+  diaLocal,
+  limitarMeta,
+  META_PADRAO,
+  metaStore,
+  ultimoStore,
+  type Atividade,
+  type Dia,
+} from "@/lib/ritmo";
 import { assinar, lerProgresso, lerProgressoServidor, salvarProgresso } from "@/lib/progress-store";
 import { chaveTopico } from "@/lib/status";
 import { getSupabase } from "@/lib/supabase";
@@ -17,6 +28,9 @@ type ForgeContexto = {
   concluidos: ReadonlySet<string>;
   alternar: (trilha: string, topico: string) => void;
   notas: Notas;
+  atividade: Atividade;
+  meta: number;
+  definirMeta: (meta: number) => void;
   /** Salva no navegador e, com login, na conta. Texto vazio apaga a anotação. */
   salvarNota: (trilha: string, topico: string, texto: string) => Promise<DestinoNota>;
   sair: () => Promise<void>;
@@ -92,6 +106,61 @@ async function sincronizarNotas(userId: string) {
   salvarNotas(mescladas);
 }
 
+type LinhaDia = Dia & { dia: string };
+
+/**
+ * Mescla a atividade local com a da conta. Os dias anteriores à tabela de
+ * atividade vêm das datas do progresso. Por dia vale o maior número de
+ * tópicos forjados, então dois aparelhos no mesmo dia não somam.
+ */
+async function sincronizarAtividade(userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return;
+
+  const [atividade, progresso, preferencias] = await Promise.all([
+    supabase.from("atividade").select("dia, forjados, anotou"),
+    supabase.from("progresso").select("concluido_em"),
+    supabase.from("preferencias").select("meta_semanal").maybeSingle(),
+  ]);
+  if (atividade.error || progresso.error || preferencias.error) {
+    console.error("[forge] erro ao carregar atividade", atividade.error ?? progresso.error ?? preferencias.error);
+    return;
+  }
+
+  const remota = new Map((atividade.data as LinhaDia[]).map(({ dia, ...d }) => [dia, d]));
+  const historico = new Map<string, number>();
+  for (const { concluido_em } of progresso.data as { concluido_em: string }[]) {
+    const dia = diaLocal(new Date(concluido_em));
+    historico.set(dia, (historico.get(dia) ?? 0) + 1);
+  }
+
+  const local = atividadeStore.ler();
+  const mesclada = new Map<string, Dia>();
+  const envios: LinhaDia[] = [];
+  for (const dia of new Set([...remota.keys(), ...local.keys(), ...historico.keys()])) {
+    const r = remota.get(dia);
+    const l = local.get(dia);
+    const d = {
+      forjados: Math.max(r?.forjados ?? 0, l?.forjados ?? 0, historico.get(dia) ?? 0),
+      anotou: Boolean(r?.anotou || l?.anotou),
+    };
+    mesclada.set(dia, d);
+    if (!r || r.forjados !== d.forjados || r.anotou !== d.anotou) envios.push({ dia, ...d });
+  }
+
+  if (envios.length) {
+    const linhas = envios.map((l) => ({ user_id: userId, ...l }));
+    const { error } = await supabase.from("atividade").upsert(linhas, { onConflict: "user_id,dia" });
+    if (error) console.error("[forge] erro ao enviar atividade local", error);
+  }
+  atividadeStore.salvar(mesclada);
+
+  // A meta da conta vale mais que a do navegador; sem meta na conta, sobe a local.
+  if (preferencias.data) metaStore.salvar(limitarMeta(preferencias.data.meta_semanal));
+  else if (metaStore.ler() !== META_PADRAO)
+    await supabase.from("preferencias").upsert({ user_id: userId, meta_semanal: metaStore.ler() });
+}
+
 export function ForgeProvider({ children }: { children: ReactNode }) {
   const supabase = typeof window === "undefined" ? null : getSupabase();
   const contasAtivas = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
@@ -99,6 +168,8 @@ export function ForgeProvider({ children }: { children: ReactNode }) {
   const [authPronto, setAuthPronto] = useState(!contasAtivas);
   const concluidos = useSyncExternalStore(assinar, lerProgresso, lerProgressoServidor);
   const notas = useSyncExternalStore(assinarNotas, lerNotas, lerNotasServidor);
+  const atividade = useSyncExternalStore(atividadeStore.assinar, atividadeStore.ler, atividadeStore.lerServidor);
+  const meta = useSyncExternalStore(metaStore.assinar, metaStore.ler, metaStore.lerServidor);
 
   useEffect(() => {
     if (!supabase) return;
@@ -114,7 +185,28 @@ export function ForgeProvider({ children }: { children: ReactNode }) {
     if (!userId) return;
     void sincronizar(userId);
     void sincronizarNotas(userId);
+    void sincronizarAtividade(userId);
   }, [userId]);
+
+  /** Atualiza o dia de hoje no navegador e na conta. */
+  const registrarHoje = useCallback(
+    (mudar: (d: Dia) => Dia) => {
+      const hoje = diaLocal();
+      const novo = new Map(atividadeStore.ler());
+      const dia = mudar(novo.get(hoje) ?? DIA_VAZIO);
+      novo.set(hoje, dia);
+      atividadeStore.salvar(novo);
+
+      if (!supabase || !userId) return;
+      void supabase
+        .from("atividade")
+        .upsert({ user_id: userId, dia: hoje, ...dia })
+        .then(({ error }) => {
+          if (error) console.error("[forge] erro ao salvar atividade", error);
+        });
+    },
+    [supabase, userId],
+  );
 
   const alternar = useCallback(
     (trilha: string, topico: string) => {
@@ -125,6 +217,7 @@ export function ForgeProvider({ children }: { children: ReactNode }) {
       if (marcar) novo.add(chave);
       else novo.delete(chave);
       salvarProgresso(novo);
+      registrarHoje((d) => ({ ...d, forjados: marcar ? d.forjados + 1 : Math.max(0, d.forjados - 1) }));
 
       if (!supabase || !userId) return;
       const req = marcar
@@ -136,7 +229,7 @@ export function ForgeProvider({ children }: { children: ReactNode }) {
         salvarProgresso(anterior);
       });
     },
-    [supabase, userId],
+    [supabase, userId, registrarHoje],
   );
 
   const salvarNota = useCallback(
@@ -148,6 +241,7 @@ export function ForgeProvider({ children }: { children: ReactNode }) {
       if (limpo) novas.set(chave, { texto: limpo, em });
       else novas.delete(chave);
       salvarNotas(novas);
+      if (limpo && !atividadeStore.ler().get(diaLocal())?.anotou) registrarHoje((d) => ({ ...d, anotou: true }));
 
       if (!supabase || !userId) return "navegador";
       // Diferente do progresso, não desfaz o local em caso de erro: o texto
@@ -159,6 +253,21 @@ export function ForgeProvider({ children }: { children: ReactNode }) {
       console.error("[forge] erro ao salvar anotação", error);
       return "erro";
     },
+    [supabase, userId, registrarHoje],
+  );
+
+  const definirMeta = useCallback(
+    (valor: number) => {
+      const meta = limitarMeta(valor);
+      metaStore.salvar(meta);
+      if (!supabase || !userId) return;
+      void supabase
+        .from("preferencias")
+        .upsert({ user_id: userId, meta_semanal: meta })
+        .then(({ error }) => {
+          if (error) console.error("[forge] erro ao salvar meta", error);
+        });
+    },
     [supabase, userId],
   );
 
@@ -168,10 +277,13 @@ export function ForgeProvider({ children }: { children: ReactNode }) {
     // O progresso e as anotações continuam salvos na conta; limpa o navegador para o próximo usuário.
     salvarProgresso(new Set());
     salvarNotas(new Map());
+    atividadeStore.salvar(new Map());
+    metaStore.salvar(META_PADRAO);
+    ultimoStore.salvar(null);
   }, [supabase]);
 
   return (
-    <Contexto value={{ authPronto, usuario, contasAtivas, concluidos, alternar, notas, salvarNota, sair }}>
+    <Contexto value={{ authPronto, usuario, contasAtivas, concluidos, alternar, notas, salvarNota, atividade, meta, definirMeta, sair }}>
       {children}
     </Contexto>
   );

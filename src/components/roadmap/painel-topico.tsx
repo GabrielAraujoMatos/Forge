@@ -1,8 +1,10 @@
 "use client";
 
 import { BookOpen, ExternalLink, FileText, FlaskConical, GraduationCap, Hammer, Video, X } from "lucide-react";
+import { chaveTopico } from "@/lib/status";
 import { NIVEIS, STATUS, TIPOS_RECURSO, type Status, type TipoRecurso, type Topico } from "@/lib/types";
 import { COR_STATUS, ICONE_STATUS } from "../legenda-status";
+import { ChipsCertificacao } from "../certificacoes";
 import { AnotacaoTopico } from "./anotacao-topico";
 
 const iconeRecurso = {
@@ -103,6 +105,8 @@ export function PainelTopico({ trilha, topico, topicos, status, aoFechar, aoSele
           </section>
   
           <AnotacaoTopico trilha={trilha} topico={topico.id} />
+
+          <ChipsCertificacao chave={chaveTopico(trilha, topico.id)} />
   
           {(topico.requisitos.length > 0 || desbloqueia.length > 0) && (
             <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
