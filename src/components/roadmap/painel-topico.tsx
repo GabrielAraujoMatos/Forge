@@ -1,11 +1,14 @@
 "use client";
 
-import { BookOpen, ExternalLink, FileText, FlaskConical, GraduationCap, Hammer, Video, X } from "lucide-react";
+import { BookOpen, Bot, ClipboardCheck, ExternalLink, FileText, FlaskConical, GraduationCap, Hammer, Video, X } from "lucide-react";
 import { chaveTopico } from "@/lib/status";
 import { NIVEIS, STATUS, TIPOS_RECURSO, type Status, type TipoRecurso, type Topico } from "@/lib/types";
 import { COR_STATUS, ICONE_STATUS } from "../legenda-status";
 import { ChipsCertificacao } from "../certificacoes";
+import { useState } from "react";
 import { AnotacaoTopico } from "./anotacao-topico";
+import { QuestionarioTopico } from "./questionario-topico";
+import { TutorTopico } from "./tutor-topico";
 
 const iconeRecurso = {
   doc: BookOpen,
@@ -14,6 +17,14 @@ const iconeRecurso = {
   video: Video,
   pratica: FlaskConical,
 } satisfies Record<TipoRecurso, unknown>;
+
+type Aba = "topico" | "tutor" | "questionario";
+
+const ABAS = [
+  { id: "topico", rotulo: "Tópico", Icone: BookOpen },
+  { id: "tutor", rotulo: "Tutor", Icone: Bot },
+  { id: "questionario", rotulo: "Questionário", Icone: ClipboardCheck },
+] as const;
 
 type Props = {
   trilha: string;
@@ -32,6 +43,10 @@ export function PainelTopico({ trilha, topico, topicos, status, aoFechar, aoSele
   const porId = new Map(topicos.map((t) => [t.id, t]));
   const desbloqueia = topicos.filter((t) => t.requisitos.includes(topico.id));
   const forjado = st === "forjado";
+  const [aba, setAba] = useState<Aba>("topico");
+  // Tutor e questionário só montam quando abertos e continuam montados depois,
+  // para não perder a conversa ou as respostas ao trocar de aba.
+  const [abertas, setAbertas] = useState<ReadonlySet<Aba>>(new Set(["topico"]));
 
   return (
     <>
@@ -57,7 +72,38 @@ export function PainelTopico({ trilha, topico, topicos, status, aoFechar, aoSele
           </button>
         </header>
   
-        <div className="flex-1 space-y-6 overflow-y-auto p-5">
+        <div className="flex border-b border-ferro px-5 text-sm" role="tablist">
+          {ABAS.map(({ id, rotulo, Icone }) => (
+            <button
+              key={id}
+              role="tab"
+              aria-selected={aba === id}
+              onClick={() => {
+                setAba(id);
+                setAbertas((a) => new Set(a).add(id));
+              }}
+              className={`-mb-px flex items-center gap-1.5 border-b-2 px-3 py-2.5 transition ${
+                aba === id ? "border-brasa text-aco" : "border-transparent text-cinza hover:text-aco"
+              }`}
+            >
+              <Icone className="size-4" />
+              {rotulo}
+            </button>
+          ))}
+        </div>
+
+        {abertas.has("tutor") && (
+          <div className={aba === "tutor" ? "flex min-h-0 flex-1 flex-col" : "hidden"}>
+            <TutorTopico trilha={trilha} topico={topico.id} />
+          </div>
+        )}
+        {abertas.has("questionario") && (
+          <div className={aba === "questionario" ? "flex min-h-0 flex-1 flex-col" : "hidden"}>
+            <QuestionarioTopico trilha={trilha} topico={topico.id} forjado={forjado} />
+          </div>
+        )}
+
+        <div className={`flex-1 space-y-6 overflow-y-auto p-5 ${aba === "topico" ? "" : "hidden"}`}>
           <p className="text-cinza">{topico.resumo}</p>
   
           {st === "frio" && (
